@@ -1,0 +1,6 @@
+############## EVAL A RENDRE POUR LE 01/02/2019
+
+1- Améliorer les méthodes de sauvegarde et de restauration en mode mémoire(sans bdd)
+2- Ajouter dans la fonctionnalité d'export celui en .csv
+3- Compléter la couche data (dal) en implémentant les accès BDD
+=> vous utiliserez une base de données relationnelle accessible via l'API JDBC.
