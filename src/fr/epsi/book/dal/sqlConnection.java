@@ -23,7 +23,7 @@ public class sqlConnection{
             String url = "jdbc:sqlite:" +  System.getProperty("user.dir") + "\\" + fileName;
         System.out.println(url);
 
-       /* try (Connection conn = DriverManager.getConnection(url)) {
+        try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
                 System.out.println("A new database has been created.");
@@ -31,7 +31,7 @@ public class sqlConnection{
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        }*/
+        }
     }
 
     /**
