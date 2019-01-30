@@ -2,11 +2,9 @@ package fr.epsi.book;
 
 import fr.epsi.book.dal.BookDAO;
 import fr.epsi.book.dal.ContactDAO;
-import fr.epsi.book.dal.IDAO;
 import fr.epsi.book.domain.Book;
 import fr.epsi.book.domain.Contact;
 
-import javax.jws.soap.SOAPBinding;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -75,7 +73,7 @@ public class App {
 
         try {
             contactDAO.create(contact);
-        }catch (SQLException se){
+        } catch (SQLException se) {
             se.getErrorCode();
         }
 
@@ -83,7 +81,7 @@ public class App {
 
         try {
             bookDAO.update(book);
-        }catch (SQLException se){
+        } catch (SQLException se) {
             se.getErrorCode();
         }
         System.out.println("Nouveau contact ajouté ...");
@@ -121,7 +119,7 @@ public class App {
             // Modification en bdd
             try {
                 contactDAO.update(contact);
-            }catch (SQLException se){
+            } catch (SQLException se) {
                 se.getErrorCode();
             }
 
@@ -141,7 +139,7 @@ public class App {
         try {
             Contact ctc = contactDAO.findById(id);
             contactDAO.remove(ctc);
-        }catch (SQLException se){
+        } catch (SQLException se) {
             se.getErrorCode();
         }
 
@@ -330,37 +328,41 @@ public class App {
 
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(Paths.get(BOOK_BKP_DIR), "*.ser")) {
             List<Path> paths = new ArrayList<>();
+
             System.out.println("**************************************");
             System.out.println("********Choix d'une sauvegarde********");
 
             for (Path path : ds) {
 
                 paths.add(path);
-                System.out.println(paths.size()+ " - " + path.getFileName());
+                System.out.println(paths.size() + " - " + path.getFileName());
             }
 
-            System.out.println("**************************************");
-            System.out.print("*Choisir une sauvegarde à restaurer : ");
+            if (paths.size() != 0) {
+                System.out.println("**************************************");
+                System.out.print("*Choisir une sauvegarde à restaurer : ");
 
-            int selectedNumber =sc.nextInt();
+                int selectedNumber = sc.nextInt();
 
-            if (selectedNumber > 0 && selectedNumber < paths.size()) {
-                System.out.println();
+                if (selectedNumber > 0 && selectedNumber < paths.size()) {
+                    System.out.println();
 
-                Path selectedPath = paths.get(selectedNumber - 1);
-                System.out.println("Restauration du fichier : " + selectedPath.getFileName());
-                try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(selectedPath))) {
-                    book = (Book) ois.readObject();
-                    System.out.println("Restauration terminée : fichier " + selectedPath.getFileName());
+                    Path selectedPath = paths.get(selectedNumber - 1);
+                    System.out.println("Restauration du fichier : " + selectedPath.getFileName());
+                    try (ObjectInputStream ois = new ObjectInputStream(Files.newInputStream(selectedPath))) {
+                        book = (Book) ois.readObject();
+                        System.out.println("Restauration terminée : fichier " + selectedPath.getFileName());
 
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    System.out.println(" Nombre incorrect ");
+                    restoreContacts();
                 }
-            }else{
-                System.out.println(" Nombre incorrect ");
-                restoreContacts();
+            } else {
+                System.out.println(" Aucun fichier de restoration disponible");
+                dspMainMenu();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -383,7 +385,8 @@ public class App {
     private static void exportContactsToCsv() {
         String csv = "Nom;Email;Telephone;Type de contact \n";
 
-        try {
+        // V2 avec bdd
+       /* try {
            List<Book> books = bookDAO.findAll();
            for (Book book: books){
                Map<String, Contact> contacts = book.getContacts();
@@ -399,9 +402,9 @@ public class App {
 
         }catch(SQLException se){
             se.getErrorCode();
-        }
+        }*/
         // V1 sans base de données
-        /*Map<String, Contact> contacts = book.getContacts();
+        Map<String, Contact> contacts = book.getContacts();
         for (Map.Entry<String, Contact> entry : contacts.entrySet()) {
             String newLine = entry.getValue().getName() + ";" +
                     entry.getValue().getEmail() + ";" +
@@ -409,7 +412,7 @@ public class App {
                     entry.getValue().getType() + "\n";
 
             csv = csv.concat(newLine);
-        }*/
+        }
         try {
             System.out.print("Entrer le nom pour le fichier : ");
             String FileName = sc.nextLine() + ".csv";
